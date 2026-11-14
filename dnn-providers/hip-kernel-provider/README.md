@@ -102,6 +102,13 @@ Kernel source files (`.cpp`, `.hpp`, `.h`) under `engines/` are embedded as C++ 
 
 The embedding is handled by the `embed_kernel_sources()` CMake function in `src/cmake/KernelEmbedding.cmake`.
 
+## Environment Variables
+
+| Variable | Effect |
+|---|---|
+| `HIP_KERNEL_PROVIDER_ENABLE_CONV` | Set to `1`, `true`, `on` or `yes`: a build with the conv engine group (`-DHIPKERNELPROVIDER_ENABLE_CONV=ON`, off by default) serves its `hipkernel:CONV_*` engines. Unset or any other value: the provider serves exactly what a build without the group serves. An opt-in preview; heuristics and default-on come later. Read once, when the provider loads its descriptors. See [the conv engine group](conv/README.md#opt-in-preview). |
+| `HIP_KERNEL_PROVIDER_DISABLE_GENERIC_CODE_OBJECTS` | Set to `1`, `true`, `on` or `yes`: a kpack archive entry for an LLVM generic target (`gfx11-generic`, `gfx12-generic`) is never selected. Only an entry for the device's own architecture loads. A device that an archive serves only through a generic entry gets a miss (`ARCH_LOOKUP`, naming this variable), and the caller takes its normal miss path. Unset, an exact entry still wins over a generic one. Read at every archive lookup. |
+
 ## Saving and Loading Execution Plans
 
 You can save a built execution plan to bytes and load it later, in the same process or in another one. A loaded plan runs without the plan build: the provider does not search descriptors, read a kpack archive, or compile a kernel.
