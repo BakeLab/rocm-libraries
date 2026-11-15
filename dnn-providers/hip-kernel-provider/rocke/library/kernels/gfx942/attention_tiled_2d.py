@@ -514,6 +514,14 @@ class UnifiedAttention2DTiledSpec:
             raise ValueError(
                 f"emit_lse must be a bool, got {type(self.emit_lse).__name__}"
             )
+        # The K and V read sources: a truthy non-bool such as "false" must be
+        # refused, not read as True.
+        for flag in ("use_k_hbm_direct", "use_v_hbm_direct"):
+            value = getattr(self, flag)
+            if type(value) is not bool:
+                raise TypeError(
+                    f"gfx942 tiled 2D spec failed - {flag}={value!r}, expected a bool"
+                )
         # gfx942 (CDNA3) variant: the narrow ``16x16x16`` default path only.
         # The wide-K (32x32x16 migration) and transpose-read / native-fp8
         # experimental knobs all depend on gfx950-only ISA (wide-K MFMA atoms,
