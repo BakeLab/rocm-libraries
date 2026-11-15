@@ -408,7 +408,9 @@ def test_a_value_head_dq_row_ships_in_the_dq_u2_pack_and_the_standard_row_in_the
     assert [gd.extra_pack(e) for e in ops["sdpa_bwd_dq"]] == [None, "u2"]
     pack = gd._arch_documents(
         ops["sdpa_bwd_dq"],
-        gd.OpDescriptors("sdpa_bwd_dq", gd._fields_for_op(ops["sdpa_bwd_dq"])),
+        gd.OpDescriptors(
+            "sdpa_bwd_dq", gd._fields_for_op(ops["sdpa_bwd_dq"]), ued="split-engine-id"
+        ),
         ARCH,
     )
     assert sorted(pack) == ["flydsl_sdpa_bwd_dq.kdp.json", f"{ARCH}.dq_u2.kdp.json"]
