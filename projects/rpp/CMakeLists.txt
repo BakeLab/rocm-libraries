@@ -209,11 +209,7 @@ message("-- ${Cyan}     -D CODE_COVERAGE=${CODE_COVERAGE} [Select RPP code cover
 find_package(OpenMP COMPONENTS CXX REQUIRED)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 
-# STD Filesystem (private to rpp; not part of the link interface)
 set(RPP_PRIVATE_LINK_LIBS "")
-if(NOT APPLE)
-    list(APPEND RPP_PRIVATE_LINK_LIBS stdc++fs)
-endif()
 
 # set global compiler flags for the project
 # -fPIC -- Generate position-independent code if possible.
