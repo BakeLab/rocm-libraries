@@ -81,7 +81,7 @@ function( rocblas_library_settings lib_target_ )
   if (WIN32)
     target_link_libraries( ${lib_target_} PRIVATE hip::device )
   else()
-    target_link_libraries( ${lib_target_} PRIVATE hip::device -lstdc++fs --rtlib=compiler-rt --unwindlib=libgcc)
+    target_link_libraries( ${lib_target_} PRIVATE hip::device --rtlib=compiler-rt --unwindlib=libgcc)
 
     if(BUILD_SHARED_LIBS)
       set(ROCTX_PATH "" CACHE STRING "Path to the roctx library (directory containing libroctx64.so)")
