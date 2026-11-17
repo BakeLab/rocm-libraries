@@ -27,7 +27,6 @@ jobs:
       tensilelite-coverage: ${{ steps.configure.outputs.tensilelite_coverage }}
       docker-image: ${{ steps.env.outputs.docker-image }}
       linux-runner: ${{ steps.env.outputs.linux-runner }}
-      windows-runner: ${{ steps.env.outputs.windows-runner }}
       therock-ref: ${{ steps.env.outputs.therock-ref }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -51,7 +50,6 @@ jobs:
     with:
       docker_image: ${{ needs.changes.outputs.docker-image }}
       linux_runner: ${{ needs.changes.outputs.linux-runner }}
-      windows_runner: ${{ needs.changes.outputs.windows-runner }}
 
   rocisa:
     name: "rocISA"
@@ -61,7 +59,6 @@ jobs:
     with:
       docker_image: ${{ needs.changes.outputs.docker-image }}
       linux_runner: ${{ needs.changes.outputs.linux-runner }}
-      windows_runner: ${{ needs.changes.outputs.windows-runner }}
 
   geko:
     name: "GEKO"
@@ -71,7 +68,6 @@ jobs:
     with:
       docker_image: ${{ needs.changes.outputs.docker-image }}
       linux_runner: ${{ needs.changes.outputs.linux-runner }}
-      windows_runner: ${{ needs.changes.outputs.windows-runner }}
 
   miopen:
     name: "MIOpen"
