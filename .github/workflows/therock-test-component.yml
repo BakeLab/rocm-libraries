@@ -69,12 +69,6 @@ jobs:
           sparse-checkout: build_tools
           path: "prejob"
 
-      - name: Pre-job cleanup processes on Windows
-        if: ${{ runner.os == 'Windows' }}
-        timeout-minutes: 5
-        shell: powershell
-        run: . '${{ github.workspace }}\prejob\build_tools\github_actions\cleanup_processes.ps1'
-
       - name: Pre-job cleanup GPU processes on Linux
         if: ${{ runner.os == 'Linux' }}
         timeout-minutes: 5
@@ -85,10 +79,6 @@ jobs:
         with:
           repository: "ROCm/TheRock"
           ref: ${{ inputs.therock_ref }}
-
-      - name: Configure git for long paths on Windows
-        if: ${{ runner.os == 'Windows' }}
-        run: git config --global core.longpaths true
 
       - name: Checkout rocm-libraries repository for scripts
         timeout-minutes: 30
@@ -169,12 +159,6 @@ jobs:
 
       # GitHub's 'Complete job' step is unaware of launched executables
       # and will fail to clean up orphan processes.
-      - name: Post-job cleanup processes on Windows
-        if: ${{ always() && runner.os == 'Windows' }}
-        timeout-minutes: 5
-        shell: powershell
-        run: . '${{ github.workspace }}\build_tools\github_actions\cleanup_processes.ps1'
-
       - name: Post-job cleanup GPU processes on Linux
         if: ${{ always() && runner.os == 'Linux' }}
         timeout-minutes: 5

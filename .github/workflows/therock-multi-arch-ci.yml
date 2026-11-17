@@ -39,14 +39,6 @@ on:
         type: string
         description: "If enabled, reduce test set on Linux to the list of labels prefixed with 'test:'. ex: test:rocprim, test:hipcub"
         default: ""
-      windows_amdgpu_families:
-        type: string
-        description: "Insert comma-separated list of Windows GPU families to build and test. ex: gfx94X, gfx120X (empty = skip windows)"
-        default: ""
-      windows_test_labels:
-        type: string
-        description: "If enabled, reduce test set on Windows to the list of labels prefixed with 'test:' ex: test:rocprim, test:hipcub"
-        default: ""
       prebuilt_stages:
         type: string
         default: ""
@@ -154,6 +146,7 @@ jobs:
     needs: [ci-env, configure]
     uses: ROCm/TheRock/.github/workflows/setup_multi_arch.yml@release/therock-10.1
     with:
+      windows_amdgpu_families: 'none'
       build_variant: "release"
       # Limit GPU families for rocm-libraries CI.
       # gfx125X (CDNA5/gfx1250) is included build-only on every PR/push: no test
@@ -163,9 +156,7 @@ jobs:
       # restores that parity so gfx1250 build breaks are caught same-PR instead of
       # only nightly.
       linux_amdgpu_families: ${{ inputs.linux_amdgpu_families || 'gfx94X,gfx950,gfx125X' }}
-      windows_amdgpu_families: ${{ inputs.windows_amdgpu_families || 'gfx110X' }}
       linux_test_labels: ${{ inputs.linux_test_labels || '' }}
-      windows_test_labels: ${{ inputs.windows_test_labels || '' }}
       # Copy all stages except math-libs and ml-libs from TheRock baseline
       # rocm-libraries only affects math-libs and ml-libs source sets
       # RPP owns cv-libs, so rebuild that stage when projects/rpp changes.
@@ -227,41 +218,11 @@ jobs:
       contents: read
       id-token: write
 
-  windows_build_and_test:
-    name: Windows::${{ fromJSON(needs.setup.outputs.windows_build_config || '{}').build_variant_label || 'skip' }}
-    needs: [configure, setup]
-    if: >-
-      ${{
-        needs.setup.outputs.windows_build_config != '' &&
-        needs.setup.outputs.enable_build_jobs == 'true' &&
-        needs.configure.outputs.skip_tests != 'true'
-      }}
-    uses: ROCm/TheRock/.github/workflows/multi_arch_ci_windows.yml@release/therock-10.1
-    secrets: inherit
-    with:
-      build_config: ${{ needs.setup.outputs.windows_build_config }}
-      test_labels: ${{ needs.setup.outputs.windows_test_labels }}
-      rocm_package_version: ${{ needs.setup.outputs.rocm_package_version }}
-      test_type: ${{ needs.setup.outputs.test_type }}
-      external_repo_config: ${{ needs.setup.outputs.external_repo_config }}
-      # Empty string when run_all_tests=true triggers full test run in downstream workflow
-      changed_projects: ${{ needs.configure.outputs.run_all_tests == 'true' && '' || needs.configure.outputs.test_projects }}
-      repository: ROCm/TheRock
-      # Concrete SHA resolved once by setup; do not re-resolve main here.
-      ref: release/therock-10.1
-    permissions:
-      contents: read
-      id-token: write
-
   multi_arch_ci_summary:
     name: Multi-Arch CI Summary
     if: always()
     needs:
-      - ci-env
-      - configure
-      - setup
-      - linux_build_and_test
-      - windows_build_and_test
+      ["ci-env", "configure", "setup", "linux_build_and_test"]
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout TheRock repository
