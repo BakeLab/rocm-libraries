@@ -113,17 +113,3 @@ jobs:
       # Best-effort: the reports are diagnostic artifacts, not a gate, so a
       # transient artifact-service hiccup (e.g. an ENOTFOUND while finalizing the
       # upload on a self-hosted runner) must not red an otherwise-green lane.
-      - name: Upload coverage reports
-        if: always()
-        continue-on-error: true
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: tensilelite-coverage
-          path: |
-            projects/hipblaslt/tensilelite/coverage.xml
-            projects/hipblaslt/tensilelite/coverage.json
-            projects/hipblaslt/tensilelite/char.json
-            projects/hipblaslt/tensilelite/unit.json
-            projects/hipblaslt/tensilelite/htmlcov
-          if-no-files-found: ignore
-          retention-days: 7

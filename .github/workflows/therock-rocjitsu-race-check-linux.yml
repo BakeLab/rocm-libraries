@@ -123,10 +123,3 @@ jobs:
       # stdout logs, rocjitsu sink files, race.log files, generated reduced
       # TensileLite input/output, and timing.tsv; without this artifact a failed
       # detector run is usually not actionable from the console log alone.
-      - name: Upload race reports
-        if: ${{ always() }}
-        uses: actions/upload-artifact@de65e23aa2b7e23d713bb51fbfcb6d502f8667d8 # v4.6.2
-        with:
-          name: rocjitsu-race-reports-${{ inputs.amdgpu_families }}
-          path: race-reports/
-          if-no-files-found: ignore
